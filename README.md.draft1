@@ -1,0 +1,48 @@
+# go gossip
+A gossip protocol written in golang.
+
+# struct
+A data structure in the program
+
+## Broadcast
+```
+  msg_id    String (uuid)
+  sender    NodeDesc 
+  target    ClusterLoc
+ payload    Scheme
+```
+
+## NodeDesc
+```
+location    ClusterLoc
+ version    String (semver)
+```
+
+## ClusterLoc
+```
+network    String(network uri)
+ target    String (ip | *)
+```
+
+## EventAction
+```
+uri    String (uri)
+handler    func (Broadcast broadcast)
+```
+
+# scheme
+Description of expected payload
+
+## event
+```
+     id    String (uuid)
+   type    String (uri)
+details    String
+ action    String (uri)
+```
+
+## message
+```
+id    String (uuid)
+data    String
+```
