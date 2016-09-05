@@ -1,0 +1,69 @@
+# gossip protocol 
+- when a node discovers new information it broadcasts a detailed event
+    - handling duplicates
+        - each event has an id
+        - if receive duplicate with same id just discard 
+    - detailed event
+        - event type (ex., node discovered, node lost)
+        - event sender
+            - id of node which triggered event
+        - event expected action
+            - action expected to be completed on event receival (ex., ack to sender)
+- message system 
+    - message id
+        - used to prevent duplicates
+        - discard immediately (no action taken) if duplicate 
+    - message target
+        - can be all or a specific node
+    - message spreading
+        - to -> specific node: if node known
+            - forward directly to node
+        - to -> specific node: if node unknown
+            - forward to all known nodes
+        - to -> all
+            - forward to all
+- cluster queries - requests
+    - query question
+            - a description of the information requested
+    - query sender
+        - id of node making query
+- cluster query - responses
+    - query answer
+        - the information requested
+    - query responde
+        - id of node who provided information 
+        - if new query response is received from same node use newest response 
+- cluster query
+    - node which calls cluster query must tally responses until a more than, or including, half the nodes respond with the same answer
+    - this consensus must be reached using the asking nodes most current cluster membership information
+- cluster discovery 
+    - new node is given the uri of one existing node
+    - new node sends a node discovered event to  the existing node
+        - node discovered event has the expected action of sending ack message back to event sender
+        - new node updates membership list when messages from new nodes are received 
+            - eliminates single point of failure because as soon as existing node sends event to entire membership list all known members on list will know of new node and can ack directly to new node
+- cluster leaving
+    - gracefully 
+        - node fires node leaving event
+            - expected action is to remove from membership list
+            - this expected action is the only action that must always be constant no matter what version 
+    - non gracefully 
+        - each node keeps track of the last time it received an event from each node
+        - if the node hasn't been heard from in a specified amount of time a health check event is triggered
+            - the expected action, from every node, is to send the status of the node in question
+                - responde != unresponsive node: if time is shorter then update last heard from time
+                - responde == unresponsive node: response from this node overrides all other responses
+        - if double specified amount of time reached and u responsive node not heard from: fire node leaving event on behalf of the unresponsive node
+            - unresponsive node should be able to join back because it will eventually do its own health checks on other nodes, thus having those nodes fire node joined events when contacted 
+- cluster membership 
+    - each node maintains an in memory list of all node uris 
+    - any time message is received node uri list is checked and updated with new node if necessary 
+        - when contacted by new node fire node joined event 
+- versioning
+    - any type of communication contains the gossip protocol version of the sender
+    - if the receiver 
+- authentication 
+    - when each node is set up it is given a secret key
+    - this key is used to encrypt messages and verify messages from other nodes
+    - some sort of HMAC system should be used
+        - this will verify that a message comes from who it claims to be sent from
