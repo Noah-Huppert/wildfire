@@ -31,7 +31,7 @@ Header:
 		# fullfilled  by looking at message headers.
 		#
 		# This also allows for better duplicate message control. If 
-		# the sender_id == "*" then the recieving node will be sure 
+		# the target_id == "*" then the recieving node will be sure 
 		# not to send the message back out to any node who has handled 
 		# the message. The receiving node can also keep updating this 
 		# list internally for future message forwarding 
@@ -57,6 +57,9 @@ When Header.event
 		# Sent after a configurable timeout has been surpassed since 
 		# last contact with a node.
 	= "health.heartbeat.response"
+		# Body will have status of node, how detailed has not been 
+		# decided. Could be as simple as "OK" or "NOT OK" or a detailed 
+		# report could be returned
 		
 
 NodeAddr:
@@ -70,67 +73,6 @@ Cluster queries:
 When a node receives a message and it finds a reference for a piece of data it 
 was unaware of it submits a cluster query with the URI of the data it is 
 missing. It then receives all the answers and uses the most up to date answer.
-
-----
-## interface
-### Encoder
-Responsible for transforming data into network or application readable formats.
-
-- func Encode(data interface{}) string
-- func Decode(data string) interface{}
-//typedef Variable Map<String, Encoder.Field>
-
-### Transporter
-Responsible for interacting with the chosen network stack and sending 
-data through it. 
-
-- func Send(data interface{}) Error
-- func OnRecieve(data interface{}) Error
-
-## struct
-### Program data
-#### MessageHeader
-Contains identifying information pertaining to message.
-
-- uuid string
-- senderId string
-- senderWldfrVer string
-	- Sender wildfire version
-- targetNodeId string 
-	- Either a node id or an asterisks
-	- Asterisks signifies the message is targeted at all nodes
-
-#### MessageBody <PayloadType>
-The content of the message itself.  
-
-- intent string
-- payload PayloadType
-
-#### Message
-Data structure in which all information will be transferred between nodes.
-
-- header MessageHeader
-- body MessageBody
-
-
-### Sendable data
-#### Data
-All data stored is derived from this struct. This provides a means to 
-determine if information should be overwritten due to it being outdated. 
-
-Type: `Template("$lastUpdate") | Variable`
-
-- lastUpdate long
-
-#### NodeAddr < Data
-All information necessary to contact a node directly.  
-
-Short template: $nodeId@$ip:$port
-
-- nodeId string
-- ip string
-- port int
-
 
 ---
 
