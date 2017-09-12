@@ -1,4 +1,8 @@
-Project Status: Short Term Hold (Apollo & Migrator are top priority)  
+#### Project Status
+Wishful thinking  
+Probably will never complete  
+Other projects have priority for the forseable future
+
 ![flame](assets/flame.png)  
 
 # wildfire
