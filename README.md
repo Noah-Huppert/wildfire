@@ -6,7 +6,9 @@ Other projects have priority for the forseable future
 ![flame](assets/flame.png)  
 
 # wildfire
-A leaderless gossip protocol written in golang.
+A leaderless gossip protocol written in golang.  
+
+Currently just a very shallowly thought out idea. Does not account for any complex cases like data races.
 
 # Transportation layer
 By default Wildfire uses TCP to transport messages between nodes. 
